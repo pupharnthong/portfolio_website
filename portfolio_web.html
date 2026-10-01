@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e29">
+  <meta name="description"
+    content="A computer engineering applicant portfolio featuring Python, computer vision, coding achievements, and community-focused projects.">
+  <title>TCASFOLIO · Computer Engineering Portfolio</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080e29;
+      --text: #f5f7ff;
+      --muted: #b5c3dc;
+      --coral: #ff775e;
+      --teal: #64efe3;
+      --pink: #ed79ed;
+      --line: rgba(213, 227, 255, .15);
+      --glass: rgba(34, 43, 83, .48);
+      --radius: 28px;
+
+      /* Dynamic Ocean Variables */
+      --dive: 0;
+      --ocean-top: #39bce0;
+      --ocean-mid: #2079c4;
+      --ocean-bottom: #254ca0;
+      --ray-opacity: .65;
+      --surface-opacity: 1;
+      --surface-y: 0px;
+      --caustic-y: 0px;
+      --particle-y: 0px;
+      --fish-y: 0px;
+      --seabed-opacity: 0;
+      --seabed-y: 120px;
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 110px;
+    }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: #050a22;
+      line-height: 1.65;
+      isolation: isolate;
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    button, .button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .35; }
+    :focus-visible {
+      outline: 3px solid var(--teal);
+      outline-offset: 5px;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2, h3 { line-height: 1.1; }
+    h2 {
+      font-size: clamp(2.15rem, 4.5vw, 4rem);
+      letter-spacing: -.055em;
+      margin-bottom: 24px;
+    }
+    h3 { font-size: 1.45rem; letter-spacing: -.035em; }
+    p { color: var(--muted); }
+    .wrap { width: min(1180px, 90%); margin-inline: auto; }
+    .section { padding-block: clamp(100px, 17vh, 190px); }
+    .eyebrow {
+      display: block;
+      color: #9affef;
+      font-size: .73rem;
+      font-weight: 800;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .lead { font-size: 1.08rem; max-width: 590px; }
+    .glass {
+      border: 1px solid var(--line);
+      background: var(--glass);
+      backdrop-filter: blur(18px);
+      border-radius: var(--radius);
+    }
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      padding: 13px 24px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+      font-weight: 700;
+      font-size: .9rem;
+      transition: transform .2s, background .2s;
+    }
+    .button:hover:not(:disabled) { transform: translateY(-3px); }
+    .button.primary {
+      background-color: #ff789e;
+      color: #251632;
+      border: 5px solid rgba(255,255,255,.2);
+      background-clip: padding-box;
+      box-shadow: 0 10px 35px #ff78a030;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 14px; }
+    .skip {
+      position: fixed;
+      top: -100px;
+      left: 20px;
+      z-index: 100;
+      padding: 10px 20px;
+      background: var(--bg);
+    }
+    .skip:focus { top: 10px; }
+
+    /* Layout Elements */
+    main,
+    footer {
+      position: relative;
+    }
+
+    header.glass {
+      position: fixed;
+      top: 18px;
+      left: 5%;
+      right: 5%;
+      z-index: 20;
+      background: rgba(12, 36, 88, .25);
+      border-color: rgba(220, 245, 255, .18);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+    }
+    .nav {
+      min-height: 74px;
+      padding: 12px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+    .nav-group { display: flex; gap: 28px; }
+    .nav-group:last-child { justify-content: flex-end; }
+    .nav-group a {
+      color: #edf7ff;
+      font-size: .82rem;
+      transition: color .2s;
+    }
+    .nav-group a:hover { color: white; }
+    .brand {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ff775e16;
+      border: 1px solid #ff775e55;
+    }
+    .droplet {
+      width: 17px;
+      height: 23px;
+      border-radius: 80% 0 70% 70%;
+      transform: rotate(-35deg);
+      background: linear-gradient(135deg, #ffb187, #ff546e);
+    }
+
+    /* Hero Section Overrides */
+    .hero {
+      position: relative;
+      isolation: auto;
+      min-height: 100svh;
+      padding-top: 170px;
+      padding-bottom: 85px;
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+      background: transparent;
+    }
+    .hero::before { display: none; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: 25px;
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 7.1vw, 6.3rem);
+      letter-spacing: -.075em;
+      margin-bottom: 25px;
+      overflow-wrap: anywhere;
+      text-shadow: 0 5px 40px rgba(4, 40, 100, .2);
+    }
+    .hero h1 span {
+      display: block;
+      color: #cefff5;
+    }
+    .hero .lead { max-width: 490px; }
+    .hero .actions { margin-top: 30px; }
+    .hero-note {
+      font-size: .77rem;
+      margin-top: 22px;
+      max-width: 430px;
+    }
+    .scene {
+      position: relative;
+      height: 470px;
+      filter: drop-shadow(0 25px 45px #043b7060);
+    }
+    .planet {
+      width: 340px;
+      height: 340px;
+      position: absolute;
+      top: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 29% 23%, #a6fff7, transparent 13%),
+        radial-gradient(circle at 30% 30%, #41d9dd, #147caa 40%, #18316b 69%);
+      box-shadow:
+        inset -25px -35px 55px #050925aa,
+        0 0 100px #2de6e527;
+      overflow: hidden;
+    }
+    .planet::before, .planet::after {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 100px;
+      border: 2px solid #b2fff354;
+      border-radius: 50%;
+      left: -80px;
+      transform: rotate(-25deg);
+    }
+    .planet::before { top: 100px; }
+    .planet::after { top: 165px; }
+    .orbit {
+      position: absolute;
+      top: 95px;
+      left: 50%;
+      width: 440px;
+      height: 230px;
+      border: 1px solid #88fff13d;
+      border-radius: 50%;
+      transform: translateX(-50%) rotate(-30deg);
+    }
+    .code-tile {
+      position: absolute;
+      top: 105px;
+      left: 50%;
+      width: 220px;
+      height: 180px;
+      display: grid;
+      place-content: center;
+      border-radius: 34px;
+      color: #fff0e8;
+      background: linear-gradient(145deg, #ffad7e, #ff685e 60%, #bd3768);
+      box-shadow: 20px 25px 40px #02092577,
+        inset 2px 2px 1px #ffffff55;
+      font-size: 4.5rem;
+      font-weight: 800;
+      transform: translateX(-50%) rotate(-12deg);
+      animation: bob-code 7s ease-in-out infinite;
+    }
+    .floating-label {
+      position: absolute;
+      z-index: 2;
+      padding: 15px 20px;
+      font-size: .79rem;
+      background: #101c3ad9;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      box-shadow: 0 20px 45px #03081855;
+      animation: bob 6s ease-in-out infinite;
+    }
+    .label-one { top: 40px; right: 0; }
+    .label-two { bottom: 78px; left: 0; animation-delay: -2s; }
+    .floating-label strong {
+      display: block;
+      color: var(--teal);
+      font-size: .93rem;
+    }
+    .bubble {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 24px var(--pink);
+      right: 25px;
+      bottom: 150px;
+    }
+    .bubble.small {
+      width: 9px;
+      height: 9px;
+      background: var(--teal);
+      box-shadow: 0 0 24px var(--teal);
+      right: auto;
+      left: 25px;
+      top: 90px;
+    }
+    @keyframes bob {
+      50% { transform: translateY(-14px); }
+    }
+    @keyframes bob-code {
+      50% { transform: translateX(-50%) translateY(-16px) rotate(-8deg); }
+    }
+
+    /* Text Color Adjustments */
+    .hero p,
+    .section p,
+    .closing p {
+      color: #d6e5f7;
+    }
+
+    /* Programme Overview */
+    .overview { margin-top: 0; position: relative; z-index: 3; }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 28px;
+      gap: 25px;
+      background: linear-gradient(135deg, #35448966, #101c4366);
+      border-color: #badbff26;
+      backdrop-filter: blur(18px);
+    }
+    .fact { padding: 8px 20px; }
+    .fact + .fact { border-left: 1px solid var(--line); }
+    .fact small {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .fact strong { font-size: 1.1rem; }
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 35px;
+      align-items: flex-end;
+      margin-bottom: 38px;
+    }
+    .section-heading p { max-width: 380px; margin-bottom: 26px; }
+
+    /* Project Cards & Carousel */
+    .project-track {
+      display: flex;
+      gap: 22px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+      scrollbar-color: #465786 transparent;
+      padding-bottom: 18px;
+    }
+    .project-card {
+      flex: 0 0 calc((100% - 44px) / 3);
+      min-width: 0;
+      padding: 24px;
+      scroll-snap-align: start;
+      background: linear-gradient(155deg, #5554c799, #242b738c);
+      border: 1px solid #9ebaff3d;
+      border-radius: 25px;
+      box-shadow:
+        inset 0 0 0 5px #a5adff08,
+        0 18px 35px #030a3040,
+        0 0 25px #7372ff18;
+      backdrop-filter: blur(16px);
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .project-card:hover {
+      border-color: #a2fff18c;
+      box-shadow:
+        inset 0 0 0 5px #a5adff08,
+        0 22px 45px #030a3059,
+        0 0 35px #7a9fff38;
+    }
+    .card-art {
+      height: 200px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      margin-bottom: 28px;
+      border-radius: 19px;
+      background: radial-gradient(ellipse, #8186ff33, transparent 72%);
+    }
+    .badge {
+      position: absolute;
+      top: 4px;
+      left: 0;
+      font: 700 .75rem ui-monospace, monospace;
+      color: #d4c2fb;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      width: 33px;
+      height: 33px;
+      display: grid;
+      place-items: center;
+    }
+    .art-symbol {
+      font: 800 4.8rem ui-monospace, monospace;
+      color: var(--pink);
+      text-shadow: 0 0 35px #ed79ed77, 8px 10px 0 #472552;
+      transform: rotate(-12deg);
+      animation: specimen-float 6s ease-in-out infinite;
+    }
+    .project-card:nth-child(2) .art-symbol { animation-delay: -2s; }
+    .project-card:nth-child(3) .art-symbol { animation-delay: -4s; }
+
+    @keyframes specimen-float {
+      50% { transform: translateY(-12px) rotate(-6deg); }
+    }
+
+    .art-teal .art-symbol {
+      color: var(--teal);
+      text-shadow: 0 0 35px #64efe377, 8px 10px 0 #15505e;
+    }
+    .art-orange .art-symbol {
+      color: #ffb476;
+      text-shadow: 0 0 35px #ffb47677, 8px 10px 0 #6b3c41;
+    }
+    .project-card h3 { min-height: 2.2em; }
+    .project-card p { font-size: .9rem; min-height: 5em; }
+    .card-type {
+      display: block;
+      color: var(--teal);
+      font-size: .7rem;
+      letter-spacing: .13em;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .text-button {
+      color: white;
+      background: none;
+      padding: 7px 0;
+      border: 0;
+      border-bottom: 1px solid #ff775e88;
+      font-weight: 700;
+      font-size: .85rem;
+    }
+    .carousel-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 22px;
+      gap: 20px;
+    }
+    .carousel-controls p { font-size: .8rem; margin: 0; }
+    .carousel-controls .actions { gap: 10px; }
+
+    /* Skills & Achievements */
+    .skills-section {
+      background: transparent;
+      border-block: 1px solid rgba(186, 234, 255, .12);
+    }
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 70px;
+      align-items: center;
+    }
+    .skill-cloud { display: flex; flex-wrap: wrap; gap: 12px; }
+    .skill {
+      padding: 15px 20px;
+      border-radius: 16px;
+      border: 1px solid #aedfff33;
+      background: #28397066;
+      backdrop-filter: blur(12px);
+      color: #dce8ff;
+      font-size: .92rem;
+    }
+    .skill:nth-child(3n+1) { color: var(--teal); }
+    .skill:nth-child(3n+2) { color: #ffb6a3; }
+    .award-list { display: grid; gap: 15px; }
+    .award {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      padding: 26px;
+      gap: 25px;
+      align-items: center;
+      background: linear-gradient(135deg, #35448966, #101c4366);
+      border-color: #badbff26;
+      backdrop-filter: blur(18px);
+    }
+    .award-date {
+      font-size: .75rem;
+      color: var(--teal);
+      font-family: ui-monospace, monospace;
+    }
+    .award h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .award p { margin: 0; font-size: .88rem; }
+    .source-note { font-size: .75rem; margin-top: 22px; }
+
+    /* Impact Section */
+    .impact {
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+    }
+    .impact .wrap { position: relative; z-index: 2; }
+    .impact-art {
+      height: 370px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+    .research-dome {
+      width: 290px;
+      height: 180px;
+      border-radius: 180px 180px 25px 25px;
+      position: relative;
+      border: 2px solid #91fff577;
+      background:
+        linear-gradient(90deg, transparent 49%, #97fff63d 50%, transparent 51%),
+        radial-gradient(ellipse at 50% 100%, #62f9d73b, #2078ab25);
+      box-shadow: 0 0 80px #52ffde19, inset 0 0 45px #7cfff215;
+    }
+    .research-dome::before {
+      content: "";
+      position: absolute;
+      bottom: -15px;
+      left: -20px;
+      right: -20px;
+      height: 22px;
+      border-radius: 50%;
+      background: #192745;
+      border: 1px solid #a6fff34d;
+      box-shadow: 0 12px 35px #0008;
+    }
+    .sensor {
+      width: 50px;
+      height: 65px;
+      border-radius: 12px;
+      position: absolute;
+      bottom: 30px;
+      left: calc(50% - 25px);
+      background: linear-gradient(135deg, #ffb185, #ff607d);
+      box-shadow: 0 0 35px #ff739e55;
+    }
+    .sonar-ring {
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      border: 1px solid #64efe322;
+      border-radius: 50%;
+      animation: sonar 5s ease-in-out infinite;
+    }
+    @keyframes sonar {
+      50% { transform: scale(1.12); opacity: .35; }
+    }
+    .impact-tag {
+      position: absolute;
+      bottom: 22px;
+      font: .75rem ui-monospace, monospace;
+      color: var(--teal);
+      letter-spacing: .12em;
+    }
+    .closing { text-align: center; padding-block: 90px; }
+    .closing p { max-width: 630px; margin: 0 auto 28px; }
+    .closing .actions { justify-content: center; }
+    footer {
+      border-top: 1px solid var(--line);
+      padding-block: 28px;
+      background: #03091a55;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 25px;
+      align-items: center;
+    }
+    footer strong { letter-spacing: .12em; font-size: .85rem; }
+    footer p { font-size: .75rem; margin: 0; max-width: 520px; }
+
+    /* Dialog Window */
+    dialog {
+      width: min(560px, 92vw);
+      max-height: 85svh;
+      overflow-y: auto;
+      color: var(--text);
+      padding: 35px;
+      border: 1px solid #627092;
+      border-radius: 25px;
+      background: #111a35;
+      box-shadow: 0 35px 100px #0009;
+    }
+    dialog::backdrop { background: #030716c9; backdrop-filter: blur(6px); }
+    .dialog-top { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    .dialog-top button { min-height: 40px; padding: 6px 15px; }
+    dialog h2 { font-size: 2rem; overflow-wrap: anywhere; }
+    .project-original {
+      font-family: ui-monospace, monospace;
+      font-size: .78rem;
+      overflow-wrap: anywhere;
+    }
+
+    /* Ocean World Visual Layer */
+    .ocean-world {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        var(--ocean-top),
+        var(--ocean-mid) 48%,
+        var(--ocean-bottom)
+      );
+    }
+    .ocean-surface {
+      position: absolute;
+      inset: -100px -10% auto;
+      height: 310px;
+      opacity: var(--surface-opacity);
+      transform: translate3d(0, var(--surface-y), 0);
+      background:
+        radial-gradient(
+          ellipse at 50% 0%,
+          #f2ffffb3,
+          #99ffe833 43%,
+          transparent 72%
+        ),
+        repeating-radial-gradient(
+          ellipse at 40% -25%,
+          transparent 0 22px,
+          #ccfff62e 25px 27px,
+          transparent 31px 56px
+        );
+      filter: blur(2px);
+    }
+    .ocean-rays {
+      position: absolute;
+      inset: -35% -25%;
+      opacity: var(--ray-opacity);
+      transform: rotate(-8deg);
+      transform-origin: 75% 0;
+      background: repeating-linear-gradient(
+        125deg,
+        transparent 0% 9%,
+        #ccfff514 10%,
+        #dcfff54d 11%,
+        transparent 13% 22%
+      );
+      mask-image: linear-gradient(#000 10%, transparent 85%);
+      animation: rays-drift 18s ease-in-out infinite alternate;
+    }
+    @keyframes rays-drift {
+      from { transform: translateX(-2%) rotate(-8deg); }
+      to { transform: translateX(3%) rotate(-4deg); }
+    }
+    .ocean-caustics {
+      position: absolute;
+      inset: -20%;
+      opacity: calc(.18 - var(--dive) * .12);
+      transform: translate3d(0, var(--caustic-y), 0) rotate(-15deg);
+      background:
+        repeating-radial-gradient(
+          ellipse at 15% 25%,
+          transparent 0 48px,
+          #aaffef55 50px,
+          transparent 55px 105px
+        );
+      filter: blur(4px);
+    }
+    .ocean-particles {
+      position: absolute;
+      inset: -180px 0;
+      transform: translate3d(0, var(--particle-y), 0);
+    }
+    .ocean-particle {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      opacity: var(--opacity);
+      border: 1px solid #d1fff980;
+      background: radial-gradient(
+        circle at 30% 25%,
+        #edffffb3,
+        #87e8f522 45%,
+        transparent 70%
+      );
+      box-shadow: 0 0 12px #84fff522;
+      animation: bubble-drift var(--duration) ease-in-out infinite alternate;
+      animation-delay: var(--delay);
+    }
+    @keyframes bubble-drift {
+      from { transform: translate3d(0, 15px, 0); }
+      to { transform: translate3d(18px, -60px, 0); }
+    }
+    .ocean-school {
+      position: absolute;
+      width: 230px;
+      height: 110px;
+      transform: translate3d(0, var(--fish-y), 0) rotate(-12deg);
+      opacity: .42;
+    }
+    .school-one { top: 29%; right: 6%; }
+    .school-two { top: 75%; left: 4%; opacity: .2; }
+    .ocean-school i {
+      position: absolute;
+      width: 30px;
+      height: 10px;
+      border-radius: 70% 40% 40% 70%;
+      background: linear-gradient(#a3fff1, #2e8fcd);
+      animation: fish-swim 8s ease-in-out infinite alternate;
+    }
+    .ocean-school i::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: -2px;
+      border-right: 10px solid #75d6e3;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+    }
+    .ocean-school i:nth-child(1) { left: 25px; top: 20px; }
+    .ocean-school i:nth-child(2) { left: 85px; top: 8px; animation-delay: -2s; }
+    .ocean-school i:nth-child(3) { left: 145px; top: 37px; animation-delay: -4s; }
+    .ocean-school i:nth-child(4) { left: 60px; top: 65px; animation-delay: -1s; }
+    .ocean-school i:nth-child(5) { left: 120px; top: 82px; animation-delay: -3s; }
+    .ocean-school i:nth-child(6) { left: 185px; top: 62px; animation-delay: -5s; }
+    @keyframes fish-swim {
+      to { transform: translateX(-35px) translateY(-7px); }
+    }
+    .ocean-seabed {
+      position: absolute;
+      inset: auto -5% -60px;
+      height: 280px;
+      opacity: var(--seabed-opacity);
+      transform: translate3d(0, var(--seabed-y), 0);
+      background:
+        radial-gradient(ellipse at 75% 100%, #315077 0, transparent 55%),
+        radial-gradient(ellipse at 20% 100%, #131c49 0, transparent 60%);
+    }
+    .coral {
+      position: absolute;
+      bottom: 20px;
+      width: 190px;
+      height: 145px;
+      opacity: .75;
+      border-radius: 50% 50% 15% 15%;
+      background:
+        repeating-conic-gradient(
+          from -35deg at 50% 100%,
+          transparent 0deg 9deg,
+          currentColor 10deg 15deg,
+          transparent 16deg 24deg
+        );
+      filter: drop-shadow(0 0 18px currentColor);
+    }
+    .coral-pink { right: 6%; color: #db639e; }
+    .coral-teal {
+      left: 3%;
+      color: #3db3b3;
+      width: 125px;
+      height: 190px;
+    }
+    .coral-violet {
+      right: 23%;
+      color: #8065da;
+      width: 110px;
+      height: 100px;
+    }
+    .ocean-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at 55% 35%,
+        transparent 20%,
+        #02092280 100%
+      );
+      opacity: calc(.3 + var(--dive) * .6);
+    }
+
+    /* Depth Reveal Animations */
+    .dive-reveal {
+      opacity: 1;
+      transform: none;
+    }
+    .dive-reveal.is-pending {
+      opacity: 0;
+      transform: translateY(44px);
+    }
+    .dive-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition:
+        opacity .85s ease,
+        transform 1s cubic-bezier(.2, .7, .2, 1);
+    }
+
+    /* Depth Gauge Meter */
+    .dive-meter {
+      position: fixed;
+      right: 17px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      pointer-events: none;
+    }
+    .dive-meter-label {
+      writing-mode: vertical-rl;
+      font: 600 9px ui-monospace, monospace;
+      letter-spacing: .18em;
+      color: #daf7ffb3;
+    }
+    .dive-meter-track {
+      position: relative;
+      width: 2px;
+      height: 140px;
+      background: #ffffff26;
+    }
+    .dive-meter-fill {
+      position: absolute;
+      inset: 0;
+      background: #90fff0;
+      transform: scaleY(var(--dive));
+      transform-origin: top;
+    }
+    .dive-meter-dot {
+      position: absolute;
+      left: -3px;
+      top: calc(var(--dive) * 100%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff8ab0;
+      box-shadow: 0 0 15px #ff8ab0;
+      transform: translateY(-50%);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1000px) {
+      .hero { min-height: auto; }
+      .scene { transform: scale(.85); transform-origin: center; }
+      .hero-grid { grid-template-columns: 1.1fr 1fr; gap: 0; }
+      .project-card { flex-basis: calc((100% - 22px) / 2); }
+      .split { gap: 35px; }
+    }
+    @media (max-width: 720px) {
+      html { scroll-padding-top: 125px; }
+      header { top: 10px; }
+      .nav {
+        grid-template-columns: 1fr auto;
+        padding: 12px 18px;
+        gap: 10px;
+      }
+      .brand { grid-column: 2; grid-row: 1 / 3; }
+      .nav-group { gap: 20px; }
+      .nav-group:last-child { justify-content: flex-start; }
+      .nav-group a { font-size: .75rem; }
+      .hero { padding-top: 160px; padding-bottom: 45px; }
+      .hero-grid, .split { grid-template-columns: 1fr; }
+      .hero h1 { font-size: clamp(3rem, 12vw, 5rem); }
+      .scene {
+        height: 380px;
+        transform: scale(.9);
+        margin-top: 15px;
+      }
+      .planet { width: 290px; height: 290px; }
+      .orbit { width: 340px; }
+      .label-one { right: 0; }
+      .label-two { bottom: 25px; }
+      .facts { grid-template-columns: 1fr; gap: 15px; }
+      .fact { padding: 5px 10px; }
+      .fact + .fact {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+      }
+      .section { padding-block: 90px; }
+      .section-heading { display: block; margin-bottom: 25px; }
+      .section-heading p { max-width: none; }
+      .project-card { flex-basis: 88%; }
+      .carousel-controls { flex-wrap: wrap; }
+      .award { grid-template-columns: 1fr; gap: 10px; padding: 23px; }
+      .impact-art { height: 300px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .dive-meter { display: none; }
+      .ocean-school { scale: .65; }
+      .school-one { right: -35px; }
+      .coral { scale: .7; transform-origin: bottom; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      .dive-reveal.is-pending,
+      .dive-reveal.is-visible {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Decorative ocean environment -->
+  <div class="ocean-world" aria-hidden="true">
+    <div class="ocean-surface"></div>
+    <div class="ocean-rays"></div>
+    <div class="ocean-caustics"></div>
+    <div class="ocean-particles" id="ocean-particles"></div>
+
+    <div class="ocean-school school-one">
+      <i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="ocean-school school-two">
+      <i></i><i></i><i></i><i></i><i></i>
+    </div>
+
+    <div class="ocean-seabed">
+      <div class="coral coral-pink"></div>
+      <div class="coral coral-teal"></div>
+      <div class="coral coral-violet"></div>
+    </div>
+
+    <div class="ocean-vignette"></div>
+  </div>
+
+  <!-- Decorative progress indicator -->
+  <div class="dive-meter" aria-hidden="true">
+    <span class="dive-meter-label">SURFACE</span>
+    <div class="dive-meter-track">
+      <span class="dive-meter-fill"></span>
+      <span class="dive-meter-dot"></span>
+    </div>
+    <span class="dive-meter-label">DEEP SEA</span>
+  </div>
+
+  <a href="#main" class="skip">Skip to content</a>
+
+  <header class="glass">
+    <nav class="nav" aria-label="Main navigation">
+      <div class="nav-group">
+        <a href="#about">Overview</a>
+        <a href="#projects">Projects</a>
+      </div>
+
+      <a class="brand" href="#main" aria-label="Portfolio home">
+        <span class="droplet" aria-hidden="true"></span>
+      </a>
+
+      <div class="nav-group">
+        <a href="#achievements">Achievements</a>
+        <a href="#impact">Impact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">TCASFOLIO · Portfolio Round 1/1</span>
+          <h1 id="hero-title">DIVE INTO<span>POSSIBILITY.</span></h1>
+          <p class="lead">
+            A computer engineering applicant portfolio exploring
+            Python, computer vision, creative coding, and
+            technology with real-world purpose.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#projects">Explore projects ↗</a>
+            <a class="button" href="#about">Portfolio overview</a>
+          </div>
+          <p class="hero-note">
+            Intended programme: Computer Engineering, Faculty of
+            Engineering, Kasetsart University  · Academic year 2570 
+          </p>
+        </div>
+
+        <div class="scene" aria-hidden="true">
+          <div class="orbit"></div>
+          <div class="planet"></div>
+          <div class="code-tile">&lt;/&gt;</div>
+          <div class="floating-label label-one">
+            EXPLORE THE POSSIBILITIES
+            <strong>Python × Computer Vision</strong>
+          </div>
+          <div class="floating-label label-two">
+            FROM IDEAS TO APPLICATIONS
+            <strong>Build. Test. Learn.</strong>
+          </div>
+          <div class="bubble"></div>
+          <div class="bubble small"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="overview wrap" aria-label="Application overview">
+      <div class="facts glass">
+        <div class="fact">
+          <small>Target university</small>
+          <strong>Kasetsart University</strong>
+        </div>
+        <div class="fact">
+          <small>Faculty · Intended programme</small>
+          <strong>Engineering · Computer Engineering</strong>
+        </div>
+        <div class="fact">
+          <small>Application details in the portfolio</small>
+          <strong>Round 1/1 · 2570 B.E.</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section wrap" aria-labelledby="projects-title">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">01 / Explore the work</span>
+          <h2 id="projects-title">Small experiments.<br>New possibilities.</h2>
+        </div>
+        <p>
+          Three self-projects documented in the portfolio connect
+          real-time interaction, video processing, and creative output.
+        </p>
+      </div>
+
+      <div class="project-track" id="project-track"
+        tabindex="0" role="region" aria-label="Project carousel">
+
+        <article class="project-card glass">
+          <div class="card-art" aria-hidden="true">
+            <span class="badge">01</span>
+            <span class="art-symbol">{✦}</span>
+          </div>
+          <span class="card-type">Computer vision / Self-project</span>
+          <h3>Real-time<br>hand tracking</h3>
+          <p>
+            An application that detects hand positions and joints
+            in real-time video using MediaPipe and OpenCV.
+          </p>
+          <button class="text-button" data-project="hand"
+            aria-haspopup="dialog" aria-controls="project-dialog">
+            Learn more ↗
+          </button>
+        </article>
+
+        <article class="project-card glass">
+          <div class="card-art art-orange" aria-hidden="true">
+            <span class="badge">02</span>
+            <span class="art-symbol">@#</span>
+          </div>
+          <span class="card-type">Creative coding / Self-project</span>
+          <h3>Color ASCII<br>video player</h3>
+          <p>
+            A creative coding project that converts video into
+            colorful ASCII art.
+          </p>
+          <button class="text-button" data-project="ascii"
+            aria-haspopup="dialog" aria-controls="project-dialog">
+            Learn more ↗
+          </button>
+        </article>
+
+        <article class="project-card glass">
+          <div class="card-art art-teal" aria-hidden="true">
+            <span class="badge">03</span>
+            <span class="art-symbol">↔</span>
+          </div>
+          <span class="card-type">Interactive media / Self-project</span>
+          <h3>Gesture-controlled<br>ASCII filter</h3>
+          <p>
+            An interactive ASCII filter controlled through hand
+            gestures in real time.
+          </p>
+          <button class="text-button" data-project="gesture"
+            aria-haspopup="dialog" aria-controls="project-dialog">
+            Learn more ↗
+          </button>
+        </article>
+      </div>
+
+      <div class="carousel-controls">
+        <p id="carousel-status" role="status" aria-live="polite"></p>
+        <div class="actions">
+          <button id="previous" class="button"
+            aria-label="Previous project" aria-controls="project-track">
+            ← Previous
+          </button>
+          <button id="next" class="button"
+            aria-label="Next project" aria-controls="project-track">
+            Next →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="section skills-section"
+      aria-labelledby="skills-title">
+      <div class="wrap split">
+        <div>
+          <span class="eyebrow">02 / Technical toolkit</span>
+          <h2 id="skills-title">Tools for the<br>next discovery.</h2>
+          <p class="lead">
+            Technical skills and tools listed in the portfolio,
+            spanning programming, AI workflows, development
+            environments, and cybersecurity concepts.
+          </p>
+        </div>
+
+        <div class="skill-cloud" aria-label="Documented technical skills">
+          <span class="skill">Python</span>
+          <span class="skill">Algorithm Design</span>
+          <span class="skill">Computer Vision</span>
+          <span class="skill">YOLOv8</span>
+          <span class="skill">Data Labeling</span>
+          <span class="skill">Linux</span>
+          <span class="skill">GitHub / Version Control</span>
+          <span class="skill">Real-time Problem Solving</span>
+          <span class="skill">Cybersecurity Concepts</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="achievements" class="section wrap"
+      aria-labelledby="achievements-title">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">03 / Selected achievements</span>
+          <h2 id="achievements-title">Learning beyond<br>the classroom.</h2>
+        </div>
+        <p>
+          Selected competition results and participation records
+          reported in the attached portfolio.
+        </p>
+      </div>
+
+      <div class="award-list">
+        <article class="award glass">
+          <div class="award-date">24 MAY<br>2569 B.E.</div>
+          <div>
+            <h3>Thailand Robot &amp; Coding Challenge 2026</h3>
+            <p>1st Runner-up · Python Competition</p>
+          </div>
+        </article>
+
+        <article class="award glass">
+          <div class="award-date">28–29 MAR<br>2569 B.E.</div>
+          <div>
+            <h3>iDektep Coding (Python for AI) Challenge 2026</h3>
+            <p>Certificate of participation</p>
+          </div>
+        </article>
+
+        <article class="award glass">
+          <div class="award-date">15 AUG<br>2569 B.E.</div>
+          <div>
+            <h3>Thailand Cyber Top Talent 2026</h3>
+            <p>NCSA CTF Thailand Tournament 2026 · Certificate of participation</p>
+          </div>
+        </article>
+
+        <article class="award glass">
+          <div class="award-date">3–5 SEP<br>2569 B.E.</div>
+          <div>
+            <h3>SMTE Network Academic Conference</h3>
+            <p>Bronze Medal · Chemistry Poster Presentation</p>
+          </div>
+        </article>
+
+        <article class="award glass">
+          <div class="award-date">2025</div>
+          <div>
+            <h3>ASMOPSs Thailand 2025</h3>
+            <p>Honorable Mention · English Secondary</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="source-note">
+        Achievement details and dates are reproduced from the portfolio,
+        not independently verified. B.E. denotes the Buddhist Era calendar.
+      </p>
+    </section>
+
+    <section id="impact" class="section impact" aria-labelledby="impact-title">
+      <div class="wrap split">
+        <div>
+          <span class="eyebrow">04 / Technology with purpose</span>
+          <h2 id="impact-title">Beyond the screen.<br>Into the community.</h2>
+          <p class="lead">
+            The Water Quality Monitoring Project, documented in
+            2568 B.E., focuses on monitoring water quality and
+            contamination, including heavy metals and minerals,
+            in schools and communities.
+          </p>
+          <p>
+            The portfolio also includes a biodegradable rice straw
+            pot project addressing agricultural straw waste, and
+            IYPT physics project assistance involving experiment
+            design and academic proofing.
+          </p>
+          <div class="actions">
+            <button class="button primary" data-project="water"
+              aria-haspopup="dialog" aria-controls="project-dialog">
+              Explore the project ↗
+            </button>
+            <a class="button" href="#skills">View technical skills</a>
+          </div>
+        </div>
+
+        <div class="impact-art" aria-hidden="true">
+          <div class="sonar-ring"></div>
+          <div class="research-dome">
+            <div class="sensor"></div>
+          </div>
+          <span class="impact-tag">OBSERVE / UNDERSTAND / IMPROVE</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing wrap" aria-labelledby="closing-title">
+      <span class="eyebrow">The next chapter</span>
+      <h2 id="closing-title">Keep exploring.<br>Keep building.</h2>
+      <p>
+        A portfolio of programming experiments, technical learning,
+        competition experiences, and community-focused projects,
+        prepared for an application to Computer Engineering
+        at Kasetsart University.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="#projects">Revisit the projects ↗</a>
+        <a class="button" href="#main">Back to top ↑</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <strong>TCASFOLIO / MU</strong>
+      <p>
+        Independent applicant portfolio concept based on Tcasfolio_Mu.pdf.
+        Not an official Kasetsart University website. Private personal
+        information has been omitted.
+      </p>
+    </div>
+  </footer>
+
+  <dialog id="project-dialog" aria-labelledby="dialog-title"
+    aria-describedby="dialog-description">
+    <div class="dialog-top">
+      <button class="button" id="close-dialog" autofocus>Close ×</button>
+    </div>
+    <span class="eyebrow" id="dialog-category"></span>
+    <h2 id="dialog-title"></h2>
+    <p class="project-original" id="dialog-original"></p>
+    <p id="dialog-description"></p>
+    <p class="source-note">
+      Based on the supplied portfolio. No live demo or repository
+      link is provided in this website.
+    </p>
+  </dialog>
+
+  <!-- Script 1: Dynamic Ocean World, Scroll Dive & Particles -->
+  <script>
+  (() => {
+    const root = document.documentElement;
+    const motionPreference = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    );
+
+    const clamp = (value, min = 0, max = 1) =>
+      Math.min(max, Math.max(min, value));
+
+    const mix = (a, b, amount) => a + (b - a) * amount;
+
+    /*
+      Color stops follow the journey:
+      sunlit surface → cobalt water → violet depths → deep navy.
+    */
+    const palette = [
+      {
+        at: 0,
+        top: [57, 188, 224],
+        mid: [32, 121, 196],
+        bottom: [37, 76, 160]
+      },
+      {
+        at: 0.25,
+        top: [25, 114, 184],
+        mid: [40, 75, 170],
+        bottom: [49, 43, 137]
+      },
+      {
+        at: 0.55,
+        top: [28, 58, 135],
+        mid: [38, 35, 113],
+        bottom: [17, 28, 76]
+      },
+      {
+        at: 0.8,
+        top: [12, 29, 77],
+        mid: [12, 25, 65],
+        bottom: [6, 17, 43]
+      },
+      {
+        at: 1,
+        top: [5, 14, 37],
+        mid: [7, 20, 43],
+        bottom: [3, 9, 25]
+      }
+    ];
+
+    function interpolateColor(first, second, amount) {
+      const channels = first.map((value, index) =>
+        Math.round(mix(value, second[index], amount))
+      );
+      return `rgb(${channels.join(",")})`;
+    }
+
+    function applyPalette(progress) {
+      let end = palette.findIndex(stop => stop.at >= progress);
+      if (end < 1) end = 1;
+
+      const start = palette[end - 1];
+      const finish = palette[end];
+      const amount = clamp(
+        (progress - start.at) / (finish.at - start.at)
+      );
+
+      for (const key of ["top", "mid", "bottom"]) {
+        root.style.setProperty(
+          `--ocean-${key}`,
+          interpolateColor(start[key], finish[key], amount)
+        );
+      }
+    }
+
+    /* Create decorative particles once. */
+    const particleContainer = document.getElementById("ocean-particles");
+
+    if (particleContainer) {
+      const fragment = document.createDocumentFragment();
+
+      for (let index = 0; index < 36; index++) {
+        const particle = document.createElement("span");
+        particle.className = "ocean-particle";
+
+        particle.style.setProperty("--x", `${Math.random() * 100}%`);
+        particle.style.setProperty("--y", `${Math.random() * 100}%`);
+        particle.style.setProperty("--size", `${3 + Math.random() * 11}px`);
+        particle.style.setProperty("--opacity", .15 + Math.random() * .4);
+        particle.style.setProperty("--duration", `${7 + Math.random() * 12}s`);
+        particle.style.setProperty("--delay", `${-Math.random() * 20}s`);
+
+        fragment.appendChild(particle);
+      }
+
+      particleContainer.appendChild(fragment);
+    }
+
+    /* Reveal content once as it enters view. */
+    const revealTargets = document.querySelectorAll(
+      ".overview .facts, " +
+      ".section-heading, " +
+      ".project-track, " +
+      ".skills-section .split, " +
+      ".award, " +
+      ".impact .split, " +
+      ".closing"
+    );
+
+    if (
+      !motionPreference.matches &&
+      "IntersectionObserver" in window
+    ) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+
+          entry.target.classList.remove("is-pending");
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      }, {
+        threshold: 0,
+        rootMargin: "0px 0px -35px 0px"
+      });
+
+      revealTargets.forEach(element => {
+        element.classList.add("dive-reveal", "is-pending");
+        observer.observe(element);
+      });
+
+      motionPreference.addEventListener("change", event => {
+        if (!event.matches) return;
+
+        observer.disconnect();
+        revealTargets.forEach(element => {
+          element.classList.remove("is-pending");
+          element.classList.add("is-visible");
+        });
+      });
+    }
+
+    let frameRequested = false;
+
+    function updateOcean() {
+      frameRequested = false;
+
+      const scrollable = Math.max(
+        1,
+        root.scrollHeight - window.innerHeight
+      );
+      const progress = clamp(window.scrollY / scrollable);
+      const motion = motionPreference.matches ? 0 : 1;
+
+      root.style.setProperty("--dive", progress.toFixed(4));
+      applyPalette(progress);
+
+      root.style.setProperty(
+        "--surface-opacity",
+        clamp(1 - progress / .2).toFixed(3)
+      );
+      root.style.setProperty(
+        "--surface-y",
+        `${-Math.min(window.scrollY * .3, 330) * motion}px`
+      );
+      root.style.setProperty(
+        "--ray-opacity",
+        mix(.65, .07, progress).toFixed(3)
+      );
+      root.style.setProperty(
+        "--caustic-y",
+        `${-progress * 130 * motion}px`
+      );
+      root.style.setProperty(
+        "--particle-y",
+        `${-progress * 180 * motion}px`
+      );
+      root.style.setProperty(
+        "--fish-y",
+        `${-progress * 100 * motion}px`
+      );
+
+      const seabed = clamp((progress - .7) / .3);
+      root.style.setProperty("--seabed-opacity", seabed.toFixed(3));
+      root.style.setProperty(
+        "--seabed-y",
+        `${(1 - seabed) * 120 * motion}px`
+      );
+    }
+
+    function requestOceanUpdate() {
+      if (frameRequested) return;
+      frameRequested = true;
+      requestAnimationFrame(updateOcean);
+    }
+
+    window.addEventListener("scroll", requestOceanUpdate, {
+      passive: true
+    });
+    window.addEventListener("resize", requestOceanUpdate);
+    motionPreference.addEventListener("change", requestOceanUpdate);
+
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(requestOceanUpdate).observe(document.body);
+    }
+
+    updateOcean();
+  })();
+  </script>
+
+  <!-- Script 2: Project Dialogs & Carousel Logic -->
+  <script>
+    const projects = {
+      hand: {
+        category: "Computer vision / Self-project",
+        title: "Real-time hand tracking",
+        original: "Hand_Tracking_with_MediaPipe_and_OpenCV",
+        description:
+          "An application developed to detect hand positions and joints " +
+          "from video in real time. The project uses MediaPipe and OpenCV."
+      },
+      ascii: {
+        category: "Creative coding / Self-project",
+        title: "Color ASCII video player",
+        original: "color-ascii-video-player",
+        description:
+          "A self-project that converts video into color ASCII art, " +
+          "representing visual content through colored text characters."
+      },
+      gesture: {
+        category: "Interactive media / Self-project",
+        title: "Gesture-controlled ASCII filter",
+        original: "Hand-controlled-ascii-filter",
+        description:
+          "A real-time ASCII filter controlled through hand gestures, " +
+          "combining hand-based interaction with creative video output."
+      },
+      water: {
+        category: "Community-focused project / 2568 B.E.",
+        title: "Water Quality Monitoring",
+        original: "Water Quality Monitoring Project",
+        description:
+          "A project focused on developing a system to monitor water " +
+          "quality and contamination, including heavy metals and minerals, " +
+          "in schools and communities. The website does not claim " +
+          "specific sensor specifications, deployment results, " +
+          "or measured accuracy."
+      }
+    };
+
+    const dialog = document.getElementById("project-dialog");
+    let dialogTrigger = null;
+
+    document.querySelectorAll("[data-project]").forEach(button => {
+      button.addEventListener("click", () => {
+        const project = projects[button.dataset.project];
+        if (!project) return;
+
+        dialogTrigger = button;
+        document.getElementById("dialog-category").textContent = project.category;
+        document.getElementById("dialog-title").textContent = project.title;
+        document.getElementById("dialog-original").textContent = project.original;
+        document.getElementById("dialog-description").textContent =
+          project.description;
+
+        dialog.showModal();
+      });
+    });
+
+    document.getElementById("close-dialog").addEventListener("click", () => {
+      dialog.close();
+    });
+
+    dialog.addEventListener("close", () => {
+      dialogTrigger?.focus({ preventScroll: true });
+    });
+
+    dialog.addEventListener("click", event => {
+      const box = dialog.getBoundingClientRect();
+      const outside =
+        event.clientX < box.left ||
+        event.clientX > box.right ||
+        event.clientY < box.top ||
+        event.clientY > box.bottom;
+
+      if (event.target === dialog && outside) dialog.close();
+    });
+
+    const track = document.getElementById("project-track");
+    const cards = [...track.querySelectorAll(".project-card")];
+    const previous = document.getElementById("previous");
+    const next = document.getElementById("next");
+    const status = document.getElementById("carousel-status");
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    );
+
+    function updateCarousel() {
+      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+      previous.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= maxScroll - 2;
+
+      if (maxScroll <= 2) {
+        status.textContent = "All 3 projects in view";
+        return;
+      }
+
+      const viewport = track.getBoundingClientRect();
+      const visible = cards
+        .map((card, index) => ({ rect: card.getBoundingClientRect(), index }))
+        .filter(({ rect }) =>
+          rect.right > viewport.left + 20 &&
+          rect.left < viewport.right - 20
+        )
+        .map(({ index }) => index + 1);
+
+      if (visible.length) {
+        status.textContent = visible.length === 1
+          ? `Project ${visible[0]} of ${cards.length}`
+          : `Projects ${visible[0]}–${visible[visible.length - 1]} of ${cards.length}`;
+      }
+    }
+
+    function moveCarousel(direction) {
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 22;
+      const step = cards[0].getBoundingClientRect().width + gap;
+      track.scrollBy({
+        left: direction * step,
+        behavior: reducedMotion.matches ? "instant" : "smooth"
+      });
+    }
+
+    previous.addEventListener("click", () => moveCarousel(-1));
+    next.addEventListener("click", () => moveCarousel(1));
+
+    track.addEventListener("keydown", event => {
+      if (event.target !== track) return;
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        moveCarousel(event.key === "ArrowRight" ? 1 : -1);
+      }
+    });
+
+    let scrollFrame = null;
+    track.addEventListener("scroll", () => {
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
+      scrollFrame = requestAnimationFrame(updateCarousel);
+    }, { passive: true });
+
+    window.addEventListener("resize", updateCarousel);
+    updateCarousel();
+  </script>
+</body>
+</html>
